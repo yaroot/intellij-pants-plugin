@@ -472,9 +472,10 @@ public class PantsUtil {
   }
 
   public static Optional<VirtualFile> findBUILDFileForModule(@NotNull Module module) {
-
+    String projectPath = ExternalSystemApiUtil.getExternalProjectPath(module);
     final Optional<VirtualFile> virtualFile =
-      getPathFromAddress(module, ExternalSystemConstants.LINKED_PROJECT_PATH_KEY)
+      // getPathFromAddress(module, ExternalSystemConstants.LINKED_PROJECT_PATH_KEY)
+      Optional.ofNullable(projectPath)
         .map(VfsUtil::pathToUrl)
         .flatMap(s -> Optional.ofNullable(VirtualFileManager.getInstance().findFileByUrl(s)));
 

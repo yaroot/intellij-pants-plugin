@@ -9,6 +9,7 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -42,7 +43,9 @@ public class PantsTreeStructureProvider implements TreeStructureProvider {
     if (node instanceof PsiDirectoryNode && project != null) {
       final Module module = ModuleUtil.findModuleForPsiElement(((PsiDirectoryNode) node).getValue());
       final Optional<String> buildPath =
-        module != null ? PantsUtil.getPathFromAddress(module, ExternalSystemConstants.LINKED_PROJECT_PATH_KEY) : Optional.empty();
+        Optional.ofNullable(module)
+          .flatMap(mod -> Optional.ofNullable(ExternalSystemApiUtil.getExternalProjectPath(mod)));
+        // module != null ? PantsUtil.getPathFromAddress(module, ExternalSystemConstants.LINKED_PROJECT_PATH_KEY) : Optional.empty();
       if (buildPath.isPresent()) {
         final Optional<VirtualFile> buildFile = PantsUtil.findFileRelativeToBuildRoot(project, buildPath.get());
 
